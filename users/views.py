@@ -49,7 +49,7 @@ def login_view(request):
             else:
                 error = "Invalid email or password"
 
-    return render(request, "users/login.html", {
+    return render(request, "login.html", {
         "form": form,
         "error": error
     })
