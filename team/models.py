@@ -20,5 +20,8 @@ class Team(models.Model):
         default="MEMBER"
     )
 
+    class Meta:
+        unique_together = ("project", "user")
+
     def __str__(self):
         return f"{self.user.username} - {self.project.title} ({self.role})"
