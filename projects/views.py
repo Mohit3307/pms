@@ -2,11 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Project
 from .forms import ProjectForm
 from team.models import Team
-
-
-# def project_list(request):
-#     projects = Project.objects.all()
-#     return render(request, 'projects/project_list.html', {'projects': projects})
+from tasks.models import Task
 
 def project_list(request):
     status = request.GET.get('status')
@@ -20,6 +16,17 @@ def project_list(request):
         'projects': projects
     })
 
+def project_detail(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+
+    team_members = project.team_members.all()
+    tasks = Task.objects.filter(project=project)
+
+    return render(request, 'projects/project_detail.html', {
+        'project': project,
+        'team_members': team_members,
+        'tasks': tasks,   # 👈 ADD THIS
+    })
 
 def create_project(request):
     if request.method == "POST":
@@ -64,6 +71,9 @@ def delete_project(request, pk):
 
 def project_detail(request, pk):
     project = get_object_or_404(Project, pk=pk)
-    return render(request, "projects/project_detail.html", {
-        "project": project
+    team_members = project.team_members.all()
+
+    return render(request, 'projects/project_detail.html', {
+        'project': project,
+        'team_members': team_members
     })

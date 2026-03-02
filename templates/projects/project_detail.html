@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card shadow-sm p-4 mb-4">
+    <h2>{{ project.title }}</h2>
+    <hr>
+
+    <p><strong>Description:</strong> {{ project.description }}</p>
+    <p><strong>Deadline:</strong> {{ project.deadline }}</p>
+
+    <p><strong>Status:</strong>
+        {% if project.status == "completed" %}
+            <span class="badge bg-success">
+                {{ project.get_status_display }}
+            </span>
+        {% elif project.status == "in_progress" %}
+            <span class="badge bg-warning text-dark">
+                {{ project.get_status_display }}
+            </span>
+        {% else %}
+            <span class="badge bg-secondary">
+                {{ project.get_status_display }}
+            </span>
+        {% endif %}
+    </p>
+</div>
+
+
+<!-- ✅ Project Team Section -->
+
+<div class="card shadow-sm p-4">
+    <h4>Project Team</h4>
+    <hr>
+
+    {% if team_members %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for member in team_members %}
+                <tr>
+                    <td>{{ member.name }}</td>
+                    <td>{{ member.role }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-muted">No team members assigned yet.</p>
+    {% endif %}
+</div>
+
+<a href="{% url 'project_list' %}" class="btn btn-secondary mt-3">
+    Back to Projects
+</a>
+
+{% endblock %}
+
+<!-- ✅ Project Tasks Section -->
+
+<div class="card shadow-sm p-4 mt-4">
+    <h4>Project Tasks</h4>
+    <hr>
+
+    {% if tasks %}
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Deadline</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <td>{{ task.title }}</td>
+                    <td>{{ task.deadline }}</td>
+                    <td>
+                        {% if task.status == "completed" %}
+                            <span class="badge bg-success">Completed</span>
+                        {% elif task.status == "in_progress" %}
+                            <span class="badge bg-warning text-dark">In Progress</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Pending</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-muted">No tasks added for this project yet.</p>
+    {% endif %}
+</div>

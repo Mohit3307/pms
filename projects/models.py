@@ -9,6 +9,7 @@ class Project(models.Model):
         ('in_progress', 'In Progress'),
         ('completed', 'Completed'),
     ]
+
     title = models.CharField(max_length=200)
     description = models.TextField()
     deadline = models.DateField()
@@ -21,3 +22,19 @@ class Project(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class TeamMember(models.Model):
+
+    name = models.CharField(max_length=100)
+    role = models.CharField(max_length=100)
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name='team_members'
+    )
+
+    def __str__(self):
+        return self.name
+
+
