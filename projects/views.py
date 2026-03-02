@@ -19,13 +19,16 @@ def project_list(request):
 def project_detail(request, pk):
     project = get_object_or_404(Project, pk=pk)
 
-    team_members = project.team_members.all()
+    team_members = Team.objects.filter(project=project)
     tasks = Task.objects.filter(project=project)
+
+    print("TEAM:", team_members)
+    print("TASKS:", tasks)
 
     return render(request, 'projects/project_detail.html', {
         'project': project,
         'team_members': team_members,
-        'tasks': tasks,   # 👈 ADD THIS
+        'tasks': tasks,
     })
 
 def create_project(request):
@@ -67,13 +70,3 @@ def delete_project(request, pk):
         project.delete()
         return redirect('project_list')
     return render(request, 'projects/project_confirm_delete.html', {'project': project})
-
-
-def project_detail(request, pk):
-    project = get_object_or_404(Project, pk=pk)
-    team_members = project.team_members.all()
-
-    return render(request, 'projects/project_detail.html', {
-        'project': project,
-        'team_members': team_members
-    })
