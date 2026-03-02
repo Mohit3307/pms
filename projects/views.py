@@ -4,9 +4,21 @@ from .forms import ProjectForm
 from team.models import Team
 
 
+# def project_list(request):
+#     projects = Project.objects.all()
+#     return render(request, 'projects/project_list.html', {'projects': projects})
+
 def project_list(request):
-    projects = Project.objects.all()
-    return render(request, 'projects/project_list.html', {'projects': projects})
+    status = request.GET.get('status')
+
+    if status:
+        projects = Project.objects.filter(status=status)
+    else:
+        projects = Project.objects.all()
+
+    return render(request, 'projects/project_list.html', {
+        'projects': projects
+    })
 
 
 def create_project(request):

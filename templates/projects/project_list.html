@@ -9,6 +9,33 @@
     </a>
 </div>
 
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+        <form method="GET" class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label class="col-form-label fw-bold">Filter by Status:</label>
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select" onchange="this.form.submit()">
+                    <option value="">All Projects</option>
+                    <option value="Completed" 
+                        {% if request.GET.status == "Completed" %}selected{% endif %}>
+                        Completed
+                    </option>
+                    <option value="in_progress" 
+                        {% if request.GET.status == "in_progress" %}selected{% endif %}>
+                        In Progress
+                    </option>
+                    <option value="Pending" 
+                        {% if request.GET.status == "Pending" %}selected{% endif %}>
+                        Pending
+                    </option>
+                </select>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="card shadow-sm">
     <div class="card-body">
 
@@ -25,19 +52,32 @@
                 <tbody>
                     {% for project in projects %}
                         <tr>
-                            <td><a href="{% url 'project_detail' project.id %}">
-                            {{ project.title }}</a></td>
+                            <td>
+                                <a href="{% url 'project_detail' project.id %}">
+                                    {{ project.title }}
+                                </a>
+                            </td>
                             
                             <td>{{ project.deadline }}</td>
+                            
                             <td>
-                                {% if project.status == "Completed" %}
-                                    <span class="badge bg-success">Completed</span>
-                                {% elif project.status == "In Progress" %}
-                                    <span class="badge bg-warning text-dark">In Progress</span>
-                                {% else %}
-                                    <span class="badge bg-secondary">{{ project.status }}</span>
-                                {% endif %}
-                            </td>
+                                {% if project.status == "completed" %}
+        <span class="badge bg-success">
+            {{ project.get_status_display }}
+        </span>
+
+    {% elif project.status == "in_progress" %}
+        <span class="badge bg-warning text-dark">
+            {{ project.get_status_display }}
+        </span>
+
+    {% elif project.status == "pending" %}
+        <span class="badge bg-secondary">
+            {{ project.get_status_display }}
+        </span>
+    {% endif %}
+</td>
+                            
                             <td>
                                 <a href="{% url 'update_project' project.id %}" 
                                    class="btn btn-sm btn-warning">Edit</a>
