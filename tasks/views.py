@@ -1,77 +1,116 @@
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib import messages
 
 from .models import Task
 from projects.models import Project
 
 
-# ================= TASK LIST =================
+def get_sidebar_projects(user):
+    from team.models import Team
+    project_ids = Team.objects.filter(user=user).values_list('project_id', flat=True)
+    return Project.objects.filter(id__in=project_ids)
+
 
 @login_required
 def task_list(request):
-    tasks = Task.objects.all()
-
-    output = "<h2>Task List</h2><hr>"
-
-    for task in tasks:
-        output += (
-            f"{task.id} | {task.title} | "
-            f"{task.status} | {task.priority}<br>"
-        )
-
-    return HttpResponse(output)
+    from team.models import Team
+    user_project_ids  = Team.objects.filter(user=request.user).values_list('project_id', flat=True)
+    all_tasks         = Task.objects.filter(project_id__in=user_project_ids)
+    return render(request, 'tasks/task_list.html', {
+        'pending_tasks':     all_tasks.filter(status='Pending'),
+        'in_progress_tasks': all_tasks.filter(status='In Progress'),
+        'completed_tasks':   all_tasks.filter(status='Completed'),
+        'sidebar_projects':  get_sidebar_projects(request.user),
+    })
 
 
-# ================= CREATE TASK =================
+@login_required
+def my_tasks(request):
+    my_tasks = Task.objects.filter(assignee=request.user)
+    return render(request, 'tasks/my_tasks.html', {
+        'pending_tasks':     my_tasks.filter(status='Pending'),
+        'in_progress_tasks': my_tasks.filter(status='In Progress'),
+        'completed_tasks':   my_tasks.filter(status='Completed'),
+        'sidebar_projects':  get_sidebar_projects(request.user),
+    })
+
 
 @login_required
 def task_create(request):
-    projects = Project.objects.all()
-    users = User.objects.all()
+    from team.models import Team
+    from team.views import get_user_role
 
-    if request.method == "POST":
+    user_project_ids = Team.objects.filter(user=request.user).values_list('project_id', flat=True)
+    projects = Project.objects.filter(id__in=user_project_ids)
+    users    = User.objects.all()
+
+    if request.method == 'POST':
+        project_id  = request.POST.get('project')
+        project_obj = get_object_or_404(Project, id=project_id)
+        role        = get_user_role(request.user, project_obj)
+
+        if role == 'GUEST' or role is None:
+            messages.error(request, 'You do not have permission to create tasks.')
+            return redirect('task_create')
+
         Task.objects.create(
-            title=request.POST.get("title"),
-            description=request.POST.get("description"),
-            project_id=request.POST.get("project"),
-            assignee_id=request.POST.get("assignee"),
-            priority=request.POST.get("priority"),
-            status=request.POST.get("status"),
-            deadline=request.POST.get("deadline"),
+            title       = request.POST.get('title'),
+            description = request.POST.get('description', ''),
+            project     = project_obj,
+            assignee_id = request.POST.get('assignee') or request.user.id,
+            priority    = request.POST.get('priority', 'Medium'),
+            status      = request.POST.get('status', 'Pending'),
+            deadline    = request.POST.get('deadline'),
         )
+        return redirect('project_detail', pk=project_obj.id)
 
-        return HttpResponse("Task Created Successfully")
+    return render(request, 'tasks/task_create.html', {
+        'projects':         projects,
+        'users':            users,
+        'sidebar_projects': get_sidebar_projects(request.user),
+    })
 
-    return HttpResponse("Task Create Endpoint Working")
-
-
-# ================= TASK DETAIL =================
 
 @login_required
 def task_detail(request, id):
-    task = get_object_or_404(Task, id=id)
+    from team.views import get_user_role
 
-    output = f"""
-    <h2>Task Detail</h2>
-    <hr>
-    Title: {task.title}<br>
-    Project: {task.project.title}<br>
-    Assignee: {task.assignee.username}<br>
-    Status: {task.status}<br>
-    Priority: {task.priority}<br>
-    Description: {task.description}<br>
-    """
+    task    = get_object_or_404(Task, id=id)
+    my_role = get_user_role(request.user, task.project)
 
-    return HttpResponse(output)
+    if request.method == 'POST':
+        action = request.POST.get('action')
+
+        if action == 'update_status':
+            if my_role in ('ADMIN', 'MEMBER'):
+                new_status = request.POST.get('status')
+                if new_status in ['Pending', 'In Progress', 'Completed']:
+                    task.status = new_status
+                    task.save()
+                    messages.success(request, 'Status updated.')
+            else:
+                messages.error(request, 'Guests cannot update task status.')
+
+        return redirect('task_detail', id=id)
+
+    return render(request, 'tasks/task_detail.html', {
+        'task':             task,
+        'my_role':          my_role,
+        'sidebar_projects': get_sidebar_projects(request.user),
+    })
 
 
-# ================= DELETE TASK =================
-
+# ── delete task (ADMIN only) ──────────────────────────────────────────────────
 @login_required
 def task_delete(request, id):
-    task = get_object_or_404(Task, id=id)
-    task.delete()
+    from team.views import get_user_role
 
-    return HttpResponse("Task Deleted Successfully")
+    task = get_object_or_404(Task, id=id)
+    if get_user_role(request.user, task.project) != 'ADMIN':
+        messages.error(request, 'Only admins can delete tasks.')
+        return redirect('task_detail', id=id)
+    pk = task.project.id
+    task.delete()
+    return redirect('project_detail', pk=pk)
