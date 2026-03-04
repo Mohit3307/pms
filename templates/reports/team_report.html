@@ -1,0 +1,25 @@
+<h2>Team Members Report</h2>
+
+<table class="table table-bordered">
+
+<tr>
+<th>ID</th>
+<th>User</th>
+<th>Email</th>
+<th>Role</th>
+<th>Project</th>
+</tr>
+
+{% for member in teams %}
+
+<tr>
+<td>{{ member.id }}</td>
+<td>{{ member.user.username }}</td>
+<td>{{ member.user.email }}</td>
+<td>{{ member.role }}</td>
+<td>{{ member.project.title }}</td>
+</tr>
+
+{% endfor %}
+
+</table>
