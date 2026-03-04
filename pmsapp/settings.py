@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'projects',
     'tasks',
     'dashboard',
-    'team'
+    'team',
+    'reports',
 ]
 
 MIDDLEWARE = [
@@ -132,3 +133,4 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+LOGIN_URL = 'login'

@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+.dashboard-title{
+font-weight:600;
+margin-bottom:30px;
+text-align:center;
+}
+
+.report-card{
+border-radius:12px;
+padding:30px;
+color:white;
+text-align:center;
+transition:0.3s;
+box-shadow:0 6px 15px rgba(0,0,0,0.1);
+}
+
+.report-card:hover{
+transform:translateY(-5px);
+box-shadow:0 12px 25px rgba(0,0,0,0.2);
+}
+
+.project-card{
+background:linear-gradient(135deg,#3b82f6,#2563eb);
+}
+
+.task-card{
+background:linear-gradient(135deg,#22c55e,#15803d);
+}
+
+.team-card{
+background:linear-gradient(135deg,#facc15,#f59e0b);
+}
+
+.report-icon{
+font-size:40px;
+margin-bottom:10px;
+}
+
+.report-btn{
+margin-top:15px;
+border-radius:8px;
+padding:8px 20px;
+}
+
+</style>
+
+
+<div class="container mt-4">
+
+<h2 class="dashboard-title">📊 Reports Dashboard</h2>
+
+<div class="row g-4">
+
+<div class="col-md-4">
+
+<div class="report-card project-card">
+
+<div class="report-icon">📁</div>
+
+<h4>Project Reports</h4>
+
+<p>View project information, deadlines and status.</p>
+
+<a href="{% url 'project_report' %}" class="btn btn-light report-btn">
+View Report
+</a>
+
+</div>
+
+</div>
+
+
+<div class="col-md-4">
+
+<div class="report-card task-card">
+
+<div class="report-icon">📝</div>
+
+<h4>Task Reports</h4>
+
+<p>Track task progress, priorities and deadlines.</p>
+
+<a href="{% url 'task_report' %}" class="btn btn-light report-btn">
+View Report
+</a>
+
+</div>
+
+</div>
+
+
+<div class="col-md-4">
+
+<div class="report-card team-card">
+
+<div class="report-icon">👥</div>
+
+<h4>Team Reports</h4>
+
+<p>View team members, roles and assigned projects.</p>
+
+<a href="{% url 'team_report' %}" class="btn btn-light report-btn">
+View Report
+</a>
+
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+{% endblock %}

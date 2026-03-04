@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+<h2 class="mb-4">📊 Project Report</h2>
+
+<div class="card shadow">
+<div class="card-body">
+
+<table class="table table-hover table-bordered">
+
+<thead class="table-dark">
+<tr>
+<th>ID</th>
+<th>Project</th>
+<th>Description</th>
+<th>Deadline</th>
+<th>Status</th>
+<th>Created By</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for project in projects %}
+<tr>
+
+<td>{{ project.id }}</td>
+<td><strong>{{ project.title }}</strong></td>
+<td>{{ project.description|truncatechars:50 }}</td>
+<td>{{ project.deadline }}</td>
+
+<td>
+
+{% if project.status == "completed" %}
+<span class="badge bg-success">Completed</span>
+
+{% elif project.status == "in_progress" %}
+<span class="badge bg-warning text-dark">In Progress</span>
+
+{% else %}
+<span class="badge bg-secondary">Pending</span>
+
+{% endif %}
+
+</td>
+
+<td>{{ project.created_by.username }}</td>
+
+</tr>
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+</div>
+
+<a href="/reports/" class="btn btn-outline-secondary mt-3">← Back</a>
+
+</div>
+
+{% endblock %}
