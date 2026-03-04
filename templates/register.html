@@ -1,24 +1,51 @@
 {% extends "base.html" %}
+{% block title %}Create account — PMS{% endblock %}
 
 {% block content %}
+<div class="auth-bg">
+  <div class="auth-card" style="max-width:440px;">
+    <div class="auth-mark-row">
+      <div class="auth-hex">P</div>
+      <div>
+        <div class="auth-brand-name">PM<span>S</span></div>
+        <div class="auth-sub">Project Management System</div>
+      </div>
+    </div>
+    <h2>Create account</h2>
+    <p class="hint">Join your team and start managing projects.</p>
 
-<div class="container">
-
-    <h2>Register</h2>
+    {% if form.errors %}
+    <div style="background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);color:#ff6b6b;padding:9px 13px;border-radius:6px;font-size:12.5px;margin-bottom:14px;">
+      {% for field in form %}{% for error in field.errors %}{{ error }}<br>{% endfor %}{% endfor %}
+      {% for error in form.non_field_errors %}{{ error }}<br>{% endfor %}
+    </div>
+    {% endif %}
 
     <form method="POST">
-        {% csrf_token %}
-
-        {{ form.as_p }}
-
-        <button type="submit">Register</button>
+      {% csrf_token %}
+      <div class="field">
+        <label>Username</label>
+        <input type="text" name="username" placeholder="e.g. mohit123" value="{{ form.username.value|default:'' }}" required/>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" name="email" placeholder="you@college.edu" value="{{ form.email.value|default:'' }}" required/>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Password</label>
+          <input type="password" name="password1" placeholder="Min 8 chars" required/>
+        </div>
+        <div class="field">
+          <label>Confirm</label>
+          <input type="password" name="password2" placeholder="Repeat" required/>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-cy w100" style="justify-content:center;padding:9px;margin-top:4px;">
+        Create account →
+      </button>
     </form>
-
-    <div class="link">
-        Already have an account?
-        <a href="{% url 'login' %}">Login</a>
-    </div>
-
+    <div class="auth-bottom">Already have an account? <a href="{% url 'login' %}">Sign in</a></div>
+  </div>
 </div>
-
 {% endblock %}

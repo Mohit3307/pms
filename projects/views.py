@@ -14,8 +14,9 @@ def project_list(request):
         projects = Project.objects.all()
 
     return render(request, 'projects/project_list.html', {
-        'projects': projects
-    })
+    'projects': projects,
+    'sidebar_projects': Project.objects.filter(id__in=Team.objects.filter(user=request.user).values_list('project_id', flat=True)) if request.user.is_authenticated else []
+})
 
 @login_required
 def project_detail(request, pk):

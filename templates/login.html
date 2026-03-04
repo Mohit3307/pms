@@ -1,28 +1,44 @@
 {% extends "base.html" %}
+{% block title %}Sign in — PMS{% endblock %}
 
 {% block content %}
-
-<div class="container">
-
-    <h2>Login</h2>
-
-    <form method="POST">
-        {% csrf_token %}
-
-        {{ form.as_p }}
-
-        <button type="submit">Login</button>
-    </form>
+<div class="auth-bg">
+  <div class="auth-card">
+    <div class="auth-mark-row">
+      <div class="auth-hex">P</div>
+      <div>
+        <div class="auth-brand-name">PM<span>S</span></div>
+        <div class="auth-sub">Project Management System</div>
+      </div>
+    </div>
+    <h2>Sign in</h2>
+    <p class="hint">Continue to your workspace.</p>
 
     {% if error %}
-        <p style="color:red;">{{ error }}</p>
+    <div style="background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);color:#ff6b6b;padding:9px 13px;border-radius:6px;font-size:12.5px;margin-bottom:14px;">
+      {{ error }}
+    </div>
     {% endif %}
 
-    <div class="link">
-        Don't have an account?
-        <a href="{% url 'register' %}">Register</a>
-    </div>
+    <form method="POST">
+      {% csrf_token %}
+      <div class="field">
+        <label>Email</label>
+        <input type="email" name="email" placeholder="you@college.edu" required/>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="••••••••" required/>
+      </div>
+      <button type="submit" class="btn btn-cy w100" style="justify-content:center;padding:9px;margin-top:4px;">
+        Sign in →
+      </button>
+    </form>
 
+    <div class="auth-sep"><span>or</span></div>
+    <a href="{% url 'register' %}" class="btn btn-ghost w100" style="justify-content:center;padding:8px;">
+      Create account
+    </a>
+  </div>
 </div>
-
 {% endblock %}

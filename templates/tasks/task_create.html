@@ -1,0 +1,88 @@
+{% extends "base_app.html" %}
+{% block title %}New Task — PMS{% endblock %}
+
+{% block page_content %}
+<div class="bc mb16">
+  <a href="{% url 'tasks' %}">Tasks</a>
+  <span class="sep">›</span>
+  <strong>New Task</strong>
+</div>
+<div class="page-hd">
+  <div class="page-hd-left"><h1>New Task</h1></div>
+  <a href="{% url 'tasks' %}" class="btn btn-ghost">Cancel</a>
+</div>
+
+{% if messages %}
+{% for message in messages %}
+<div style="background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);color:#ff6b6b;padding:9px 13px;border-radius:6px;font-size:12.5px;margin-bottom:14px;max-width:600px;">{{ message }}</div>
+{% endfor %}
+{% endif %}
+
+<form method="POST" class="form-wrap">
+  {% csrf_token %}
+  <div class="fblock">
+    <div class="fblock-head">Task Details</div>
+    <div class="fblock-body">
+      <div class="field">
+        <label>Title <span style="color:var(--p-hi);">*</span></label>
+        <input type="text" name="title" placeholder="Short, descriptive task title" required/>
+      </div>
+      <div class="field">
+        <label>Description</label>
+        <textarea name="description" placeholder="What needs to be done? Notes, acceptance criteria…"></textarea>
+      </div>
+      <div class="field">
+        <label>Project <span style="color:var(--p-hi);">*</span></label>
+        <select name="project" required>
+          <option value="">— Select project —</option>
+          {% for project in projects %}
+          <option value="{{ project.id }}">{{ project.title }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="fblock">
+    <div class="fblock-head">Assignment</div>
+    <div class="fblock-body">
+      <div class="field-row">
+        <div class="field">
+          <label>Assign to</label>
+          <select name="assignee">
+            <option value="">Unassigned (defaults to me)</option>
+            {% for user in users %}
+            <option value="{{ user.id }}">{{ user.username }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="field">
+          <label>Due date <span style="color:var(--p-hi);">*</span></label>
+          <input type="date" name="deadline" required/>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Status</label>
+          <select name="status">
+            <option value="Pending">To Do</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Done</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Priority</label>
+          <select name="priority">
+            <option value="High">High</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="Low">Low</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;gap:9px;">
+    <button type="submit" class="btn btn-cy" style="flex:1;justify-content:center;padding:9px;">Create Task</button>
+    <a href="{% url 'tasks' %}" class="btn btn-ghost" style="padding:9px 18px;">Cancel</a>
+  </div>
+</form>
+{% endblock %}

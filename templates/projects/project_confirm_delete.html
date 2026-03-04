@@ -1,18 +1,25 @@
-{% extends "base.html" %}
+{% extends "base_app.html" %}
+{% block title %}Delete Project — PMS{% endblock %}
 
-{% block content %}
-
-<div class="card shadow-sm text-center">
-    <div class="card-body">
-        <h4>Are you sure you want to delete?</h4>
-        <p class="text-muted">{{ project.title }}</p>
-
-        <form method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Yes, Delete</button>
-            <a href="{% url 'project_list' %}" class="btn btn-secondary">Cancel</a>
-        </form>
-    </div>
+{% block page_content %}
+<div class="bc mb16">
+  <a href="{% url 'project_list' %}">Projects</a>
+  <span class="sep">›</span>
+  <a href="{% url 'project_detail' project.pk %}">{{ project.title }}</a>
+  <span class="sep">›</span>
+  <strong>Delete</strong>
 </div>
 
+<div class="card" style="max-width:480px;padding:36px;text-align:center;">
+  <div style="font-size:36px;margin-bottom:14px;">⚠️</div>
+  <h2 style="font-size:18px;font-weight:800;color:var(--t1);margin-bottom:8px;">Delete Project?</h2>
+  <p style="font-size:13px;color:var(--t3);line-height:1.6;margin-bottom:24px;">
+    This will permanently delete <strong style="color:var(--t1);">{{ project.title }}</strong> and all its tasks. This cannot be undone.
+  </p>
+  <form method="POST" style="display:flex;gap:9px;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-del" style="flex:1;justify-content:center;padding:10px;">Yes, Delete</button>
+    <a href="{% url 'project_detail' project.pk %}" class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px;">Cancel</a>
+  </form>
+</div>
 {% endblock %}

@@ -1,102 +1,52 @@
-{% extends "base.html" %}
+{% extends "base_app.html" %}
+{% block title %}Projects — PMS{% endblock %}
+{% block nav_projects %}on{% endblock %}
 
-{% block content %}
-
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Projects</h2>
-    <a href="{% url 'create_project' %}" class="btn btn-primary">
-        + Create Project
-    </a>
+{% block page_content %}
+<div class="page-hd">
+  <div class="page-hd-left">
+    <h1>Projects</h1>
+    <p class="sub">All projects you are a member of.</p>
+  </div>
+  <a href="{% url 'create_project' %}" class="btn btn-cy">+ New Project</a>
 </div>
 
-<div class="card shadow-sm mb-3">
-    <div class="card-body">
-        <form method="GET" class="row g-3 align-items-center">
-            <div class="col-auto">
-                <label class="col-form-label fw-bold">Filter by Status:</label>
-            </div>
-            <div class="col-md-3">
-                <select name="status" class="form-select" onchange="this.form.submit()">
-                    <option value="">All Projects</option>
-                    <option value="Completed" 
-                        {% if request.GET.status == "Completed" %}selected{% endif %}>
-                        Completed
-                    </option>
-                    <option value="in_progress" 
-                        {% if request.GET.status == "in_progress" %}selected{% endif %}>
-                        In Progress
-                    </option>
-                    <option value="Pending" 
-                        {% if request.GET.status == "Pending" %}selected{% endif %}>
-                        Pending
-                    </option>
-                </select>
-            </div>
-        </form>
+<div class="fbar mb20">
+  <a href="{% url 'project_list' %}"    class="fchip {% if not request.GET.status %}on{% endif %}">All</a>
+  <a href="?status=pending"             class="fchip {% if request.GET.status == 'pending' %}on{% endif %}">Pending</a>
+  <a href="?status=in_progress"         class="fchip {% if request.GET.status == 'in_progress' %}on{% endif %}">In Progress</a>
+  <a href="?status=completed"           class="fchip {% if request.GET.status == 'completed' %}on{% endif %}">Completed</a>
+</div>
+
+{% if projects %}
+<div class="proj-grid">
+  {% for project in projects %}
+  <div class="proj-card" onclick="location.href='{% url 'project_detail' project.id %}'">
+    <div class="proj-card-bar" style="background:{% cycle '#00d4ff' '#ffb347' '#7c83fc' '#4ade80' '#fb7185' %}"></div>
+    <div class="proj-card-top">
+      <div>
+        <div class="proj-name">{{ project.title }}</div>
+        <div class="proj-desc">{{ project.description|truncatechars:80 }}</div>
+      </div>
     </div>
-</div>
-
-<div class="card shadow-sm">
-    <div class="card-body">
-
-        {% if projects %}
-            <table class="table table-hover">
-                <thead class="table-light">
-                    <tr>
-                        <th>Title</th>
-                        <th>Deadline</th>
-                        <th>Status</th>
-                        <th width="180">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for project in projects %}
-                        <tr>
-                            <td>
-                                <a href="{% url 'project_detail' project.id %}">
-                                    {{ project.title }}
-                                </a>
-                            </td>
-                            
-                            <td>{{ project.deadline }}</td>
-                            
-                            <td>
-                                {% if project.status == "completed" %}
-        <span class="badge bg-success">
-            {{ project.get_status_display }}
-        </span>
-
-    {% elif project.status == "in_progress" %}
-        <span class="badge bg-warning text-dark">
-            {{ project.get_status_display }}
-        </span>
-
-    {% elif project.status == "pending" %}
-        <span class="badge bg-secondary">
-            {{ project.get_status_display }}
-        </span>
-    {% endif %}
-</td>
-                            
-                            <td>
-                                <a href="{% url 'update_project' project.id %}" 
-                                   class="btn btn-sm btn-warning">Edit</a>
-
-                                <a href="{% url 'delete_project' project.id %}" 
-                                   class="btn btn-sm btn-danger">Delete</a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <div class="text-center p-4">
-                <h5 class="text-muted">No projects yet</h5>
-                <p>Create your first project to get started.</p>
-            </div>
-        {% endif %}
-
+    <div class="proj-card-foot">
+      <div class="proj-meta">
+        <span class="pm-item">Due: <strong>{{ project.deadline }}</strong></span>
+        <span class="pm-item">By: <strong>{{ project.created_by.username }}</strong></span>
+      </div>
+      <span class="s-chip {% if project.status == 'completed' %}done{% elif project.status == 'in_progress' %}wip{% else %}open{% endif %}">
+        {{ project.get_status_display }}
+      </span>
     </div>
+  </div>
+  {% endfor %}
 </div>
-
+{% else %}
+<div class="card" style="padding:48px;text-align:center;color:var(--t3);">
+  <div style="font-size:36px;margin-bottom:12px;">📁</div>
+  <div style="font-size:14px;font-weight:600;color:var(--t2);margin-bottom:6px;">No projects yet</div>
+  <div style="font-size:12.5px;margin-bottom:20px;">Create your first project to get started.</div>
+  <a href="{% url 'create_project' %}" class="btn btn-cy">+ New Project</a>
+</div>
+{% endif %}
 {% endblock %}

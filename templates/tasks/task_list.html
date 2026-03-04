@@ -1,0 +1,89 @@
+{% extends "base_app.html" %}
+{% block title %}All Tasks — PMS{% endblock %}
+{% block nav_tasks %}on{% endblock %}
+
+{% block page_content %}
+<div class="page-hd">
+  <div class="page-hd-left">
+    <h1>All Tasks</h1>
+    <p class="sub">Every task across all your projects.</p>
+  </div>
+  <a href="{% url 'task_create' %}" class="btn btn-cy">+ New Task</a>
+</div>
+
+<div class="fbar mb16">
+  <a href="{% url 'my_tasks' %}" class="btn btn-ghost btn-sm">◈ My Tasks only</a>
+</div>
+
+<div class="card">
+  {% if in_progress_tasks %}
+  <div class="tl-group-hd" style="padding:12px 18px 4px;">
+    <span class="s-chip wip">In Progress</span><span class="tl-count">{{ in_progress_tasks|length }}</span>
+  </div>
+  <div style="padding:4px 18px 8px;">
+    <div class="tl-list">
+      {% for task in in_progress_tasks %}
+      <div class="tl-item t-wip" onclick="location.href='{% url 'task_detail' task.id %}'">
+        <div class="tl-dot"></div>
+        <span class="tl-name">{{ task.title }}</span>
+        <div class="tl-right">
+          <span class="tl-proj">{{ task.project.title }}</span>
+          <span class="s-chip {% if task.priority == 'High' %}hi{% elif task.priority == 'Medium' %}md{% else %}lo{% endif %}">{{ task.priority }}</span>
+          <span class="tl-due">{{ task.deadline }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if pending_tasks %}
+  <div class="tl-group-hd" style="padding:8px 18px 4px;">
+    <span class="s-chip open">To Do</span><span class="tl-count">{{ pending_tasks|length }}</span>
+  </div>
+  <div style="padding:4px 18px 8px;">
+    <div class="tl-list">
+      {% for task in pending_tasks %}
+      <div class="tl-item t-open" onclick="location.href='{% url 'task_detail' task.id %}'">
+        <div class="tl-dot"></div>
+        <span class="tl-name">{{ task.title }}</span>
+        <div class="tl-right">
+          <span class="tl-proj">{{ task.project.title }}</span>
+          <span class="s-chip {% if task.priority == 'High' %}hi{% elif task.priority == 'Medium' %}md{% else %}lo{% endif %}">{{ task.priority }}</span>
+          <span class="tl-due">{{ task.deadline }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if completed_tasks %}
+  <div class="tl-group-hd" style="padding:8px 18px 4px;opacity:.6;">
+    <span class="s-chip done">Done</span><span class="tl-count">{{ completed_tasks|length }}</span>
+  </div>
+  <div style="padding:4px 18px 8px;opacity:.45;">
+    <div class="tl-list">
+      {% for task in completed_tasks %}
+      <div class="tl-item t-done" onclick="location.href='{% url 'task_detail' task.id %}'">
+        <div class="tl-dot"></div>
+        <span class="tl-name crossed">{{ task.title }}</span>
+        <div class="tl-right">
+          <span class="tl-proj">{{ task.project.title }}</span>
+          <span class="tl-due">{{ task.deadline }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if not pending_tasks and not in_progress_tasks and not completed_tasks %}
+  <div style="padding:32px 18px;text-align:center;color:var(--t3);font-size:13px;">
+    No tasks found. <a href="{% url 'task_create' %}" style="color:var(--cy2);">Create one →</a>
+  </div>
+  {% endif %}
+
+  <div class="add-tl" style="margin-left:0;padding:8px 18px;" onclick="location.href='{% url 'task_create' %}'">＋ Add task</div>
+</div>
+{% endblock %}

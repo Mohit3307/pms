@@ -1,19 +1,61 @@
-{% extends "base.html" %}
+{% extends "base_app.html" %}
+{% block title %}{% if form.instance.pk %}Edit Project{% else %}New Project{% endif %} — PMS{% endblock %}
 
-{% block content %}
-
-<div class="card shadow-sm">
-    <div class="card-body">
-        <h3 class="mb-3">Project Form</h3>
-
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-
-            <button type="submit" class="btn btn-success">Save</button>
-            <a href="{% url 'project_list' %}" class="btn btn-secondary">Cancel</a>
-        </form>
-    </div>
+{% block page_content %}
+<div class="bc mb16">
+  <a href="{% url 'project_list' %}">Projects</a>
+  <span class="sep">›</span>
+  <strong>{% if form.instance.pk %}Edit Project{% else %}New Project{% endif %}</strong>
+</div>
+<div class="page-hd">
+  <div class="page-hd-left">
+    <h1>{% if form.instance.pk %}Edit Project{% else %}New Project{% endif %}</h1>
+  </div>
+  <a href="{% url 'project_list' %}" class="btn btn-ghost">Cancel</a>
 </div>
 
+{% if form.errors %}
+<div style="background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);color:#ff6b6b;padding:9px 13px;border-radius:6px;font-size:12.5px;margin-bottom:14px;max-width:600px;">
+  {% for field in form %}{% for error in field.errors %}{{ field.label }}: {{ error }}<br>{% endfor %}{% endfor %}
+  {% for error in form.non_field_errors %}{{ error }}<br>{% endfor %}
+</div>
+{% endif %}
+
+<form method="POST" class="form-wrap">
+  {% csrf_token %}
+  <div class="fblock">
+    <div class="fblock-head">Project Info</div>
+    <div class="fblock-body">
+      <div class="field">
+        <label>Project Name <span style="color:var(--p-hi);">*</span></label>
+        {{ form.title }}
+      </div>
+      <div class="field">
+        <label>Description</label>
+        {{ form.description }}
+      </div>
+    </div>
+  </div>
+  <div class="fblock">
+    <div class="fblock-head">Timeline &amp; Status</div>
+    <div class="fblock-body">
+      <div class="field-row">
+        <div class="field">
+          <label>Deadline <span style="color:var(--p-hi);">*</span></label>
+          {{ form.deadline }}
+        </div>
+        <div class="field">
+          <label>Status</label>
+          {{ form.status }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;gap:9px;">
+    <button type="submit" class="btn btn-cy" style="flex:1;justify-content:center;padding:9px;">
+      {% if form.instance.pk %}Save Changes{% else %}Create Project{% endif %}
+    </button>
+    <a href="{% url 'project_list' %}" class="btn btn-ghost" style="padding:9px 18px;">Cancel</a>
+  </div>
+</form>
 {% endblock %}

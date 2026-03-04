@@ -1,0 +1,110 @@
+{% extends "base_app.html" %}
+{% block title %}Team — {{ project.title }} — PMS{% endblock %}
+{% block nav_team %}on{% endblock %}
+
+{% block page_content %}
+<div class="bc mb16">
+  <a href="{% url 'project_list' %}">Projects</a>
+  <span class="sep">›</span>
+  <a href="{% url 'project_detail' project.id %}">{{ project.title }}</a>
+  <span class="sep">›</span>
+  <strong>Team</strong>
+</div>
+
+<div class="page-hd">
+  <div class="page-hd-left">
+    <h1>{{ project.title }} — Team</h1>
+    <p class="sub">
+      Members and roles for this project.
+      {% if my_role %}Your role: <strong style="color:var(--cy2);">{{ my_role|capfirst }}</strong>{% endif %}
+    </p>
+  </div>
+  <a href="{% url 'project_detail' project.id %}" class="btn btn-ghost">← Back to Project</a>
+</div>
+
+{% if messages %}
+{% for message in messages %}
+<div style="background:{% if 'Only' in message.message or 'Cannot' in message.message %}rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);color:#ff6b6b{% else %}rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:var(--s-done){% endif %};padding:9px 13px;border-radius:6px;font-size:12.5px;margin-bottom:14px;">
+  {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+
+{% if my_role == "ADMIN" %}
+<div class="card mb16">
+  <div class="card-head"><h3>Add Member by Email</h3></div>
+  <div style="padding:18px 20px;">
+    <form method="POST" action="{% url 'team_add_member' project.id %}">
+      {% csrf_token %}
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+        <div class="field" style="flex:2;min-width:200px;margin-bottom:0;">
+          <label>Email address</label>
+          <input type="email" name="email" placeholder="member@college.edu" required/>
+        </div>
+        <div class="field" style="flex:1;min-width:140px;margin-bottom:0;">
+          <label>Role</label>
+          <select name="role">
+            <option value="MEMBER">Member — can work on tasks</option>
+            <option value="ADMIN">Admin — full control</option>
+            <option value="GUEST">Guest — view only</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-cy" style="padding:9px 20px;white-space:nowrap;">Add →</button>
+      </div>
+      <p class="field-hint" style="margin-top:8px;">
+        User must have a registered account. Role applies only to <strong>{{ project.title }}</strong>.
+      </p>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+<div class="card">
+  <table class="xtable">
+    <thead>
+      <tr>
+        <th>Member</th>
+        <th>Role</th>
+        <th>Email</th>
+        <th>Joined</th>
+        {% if my_role == "ADMIN" %}<th></th>{% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for m in memberships %}
+      <tr>
+        <td>
+          <div style="display:flex;align-items:center;gap:9px;">
+            <div class="av-sm" style="background:#00d4ff;width:28px;height:28px;font-size:11px;">{{ m.user.username|first|upper }}</div>
+            <span>{{ m.user.username }}</span>
+            {% if m.user == request.user %}<span style="font-size:10px;color:var(--t4);">(you)</span>{% endif %}
+          </div>
+        </td>
+        <td>
+          <span class="s-chip {% if m.role == 'ADMIN' %}admin{% elif m.role == 'MEMBER' %}member{% else %}guest{% endif %}">
+            {{ m.role|capfirst }}
+          </span>
+        </td>
+        <td style="font-family:var(--mono);font-size:11.5px;color:var(--t3);">{{ m.user.email }}</td>
+        <td style="font-family:var(--mono);font-size:11.5px;">{{ m.user.date_joined|date:"M d, Y" }}</td>
+        {% if my_role == "ADMIN" %}
+        <td>
+          {% if m.user != request.user %}
+          <a href="{% url 'team_remove_member' project.id m.user.id %}"
+             class="btn btn-del btn-sm"
+             onclick="return confirm('Remove {{ m.user.username }} from {{ project.title }}?')">
+            Remove
+          </a>
+          {% else %}
+          <span style="font-size:11px;color:var(--t4);">—</span>
+          {% endif %}
+        </td>
+        {% endif %}
+      </tr>
+      {% empty %}
+      <tr><td colspan="5" style="color:var(--t3);padding:16px;">No members yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

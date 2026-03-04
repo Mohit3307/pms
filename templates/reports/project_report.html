@@ -1,66 +1,44 @@
-{% extends "base.html" %}
+{% extends "base_app.html" %}
+{% block title %}Project Report — PMS{% endblock %}
+{% block nav_reports %}on{% endblock %}
 
-{% block content %}
-
-<div class="container mt-4">
-
-<h2 class="mb-4">📊 Project Report</h2>
-
-<div class="card shadow">
-<div class="card-body">
-
-<table class="table table-hover table-bordered">
-
-<thead class="table-dark">
-<tr>
-<th>ID</th>
-<th>Project</th>
-<th>Description</th>
-<th>Deadline</th>
-<th>Status</th>
-<th>Created By</th>
-</tr>
-</thead>
-
-<tbody>
-
-{% for project in projects %}
-<tr>
-
-<td>{{ project.id }}</td>
-<td><strong>{{ project.title }}</strong></td>
-<td>{{ project.description|truncatechars:50 }}</td>
-<td>{{ project.deadline }}</td>
-
-<td>
-
-{% if project.status == "completed" %}
-<span class="badge bg-success">Completed</span>
-
-{% elif project.status == "in_progress" %}
-<span class="badge bg-warning text-dark">In Progress</span>
-
-{% else %}
-<span class="badge bg-secondary">Pending</span>
-
-{% endif %}
-
-</td>
-
-<td>{{ project.created_by.username }}</td>
-
-</tr>
-{% endfor %}
-
-</tbody>
-
-</table>
-
+{% block page_content %}
+<div class="bc mb16">
+  <a href="{% url 'reports_dashboard' %}">Reports</a>
+  <span class="sep">›</span>
+  <strong>Project Report</strong>
 </div>
+<div class="page-hd">
+  <div class="page-hd-left">
+    <h1>Project Report</h1>
+    <p class="sub">{{ projects|length }} project{{ projects|length|pluralize }} total.</p>
+  </div>
+  <a href="{% url 'reports_dashboard' %}" class="btn btn-ghost">← Back</a>
 </div>
 
-<a href="/reports/" class="btn btn-outline-secondary mt-3">← Back</a>
-
+<div class="card">
+  <table class="xtable">
+    <thead>
+      <tr><th>#</th><th>Project</th><th>Description</th><th>Deadline</th><th>Status</th><th>Created By</th></tr>
+    </thead>
+    <tbody>
+      {% for project in projects %}
+      <tr onclick="location.href='{% url 'project_detail' project.id %}'" style="cursor:pointer;">
+        <td style="color:var(--t4);font-family:var(--mono);">{{ project.id }}</td>
+        <td><strong>{{ project.title }}</strong></td>
+        <td style="color:var(--t3);">{{ project.description|truncatechars:50 }}</td>
+        <td style="font-family:var(--mono);font-size:12px;">{{ project.deadline }}</td>
+        <td>
+          <span class="s-chip {% if project.status == 'completed' %}done{% elif project.status == 'in_progress' %}wip{% else %}open{% endif %}">
+            {{ project.get_status_display }}
+          </span>
+        </td>
+        <td>{{ project.created_by.username }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" style="color:var(--t3);padding:20px;">No projects found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
-
 {% endblock %}

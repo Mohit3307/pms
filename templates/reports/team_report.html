@@ -1,66 +1,47 @@
-{% extends "base.html" %}
+{% extends "base_app.html" %}
+{% block title %}Team Report — PMS{% endblock %}
+{% block nav_reports %}on{% endblock %}
 
-{% block content %}
-
-<div class="container mt-4">
-
-<h2 class="mb-4">👥 Team Members Report</h2>
-
-<div class="card shadow">
-<div class="card-body">
-
-<table class="table table-bordered table-hover">
-
-<thead class="table-dark">
-<tr>
-<th>ID</th>
-<th>User</th>
-<th>Email</th>
-<th>Role</th>
-<th>Project</th>
-</tr>
-</thead>
-
-<tbody>
-
-{% for member in teams %}
-
-<tr>
-
-<td>{{ member.id }}</td>
-<td>{{ member.user.username }}</td>
-<td>{{ member.user.email }}</td>
-
-<td>
-
-{% if member.role == "ADMIN" %}
-<span class="badge bg-danger">Admin</span>
-
-{% elif member.role == "MEMBER" %}
-<span class="badge bg-primary">Member</span>
-
-{% else %}
-<span class="badge bg-secondary">Guest</span>
-
-{% endif %}
-
-</td>
-
-<td>{{ member.project.title }}</td>
-
-</tr>
-
-{% endfor %}
-
-</tbody>
-
-</table>
-
+{% block page_content %}
+<div class="bc mb16">
+  <a href="{% url 'reports_dashboard' %}">Reports</a>
+  <span class="sep">›</span>
+  <strong>Team Report</strong>
 </div>
+<div class="page-hd">
+  <div class="page-hd-left">
+    <h1>Team Report</h1>
+    <p class="sub">{{ teams|length }} membership{{ teams|length|pluralize }} across all projects.</p>
+  </div>
+  <a href="{% url 'reports_dashboard' %}" class="btn btn-ghost">← Back</a>
 </div>
 
-<a href="/reports/" class="btn btn-outline-secondary mt-3">← Back</a>
-
+<div class="card">
+  <table class="xtable">
+    <thead>
+      <tr><th>Member</th><th>Email</th><th>Role</th><th>Project</th></tr>
+    </thead>
+    <tbody>
+      {% for member in teams %}
+      <tr onclick="location.href='{% url 'team_project' member.project.id %}'" style="cursor:pointer;">
+        <td>
+          <div style="display:flex;align-items:center;gap:9px;">
+            <div class="av-sm" style="background:#00d4ff;width:26px;height:26px;font-size:10px;">{{ member.user.username|first|upper }}</div>
+            {{ member.user.username }}
+          </div>
+        </td>
+        <td style="font-family:var(--mono);font-size:11.5px;color:var(--t3);">{{ member.user.email }}</td>
+        <td>
+          <span class="s-chip {% if member.role == 'ADMIN' %}admin{% elif member.role == 'MEMBER' %}member{% else %}guest{% endif %}">
+            {{ member.role|capfirst }}
+          </span>
+        </td>
+        <td>{{ member.project.title }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" style="color:var(--t3);padding:20px;">No team memberships found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
-
 {% endblock %}
