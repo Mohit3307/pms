@@ -1,46 +1,63 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Reports Dashboard</title>
+{% extends "base.html" %}
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-</head>
-
-<body class="bg-light">
+{% block content %}
 
 <div class="container mt-5">
 
-<h2 class="text-center mb-4">Reports Dashboard</h2>
+<h2 class="mb-5 text-center">📊 Reports Dashboard</h2>
 
-<div class="row">
+<div class="row g-4">
 
+<!-- Project Reports -->
 <div class="col-md-4">
-<div class="card shadow">
-<div class="card-body text-center">
-<h4>Project Reports</h4>
-<p>View all project details</p>
-<a href="{% url 'project_report' %}" class="btn btn-primary">View Report</a>
+<div class="card shadow border-0 text-center bg-primary text-white h-100">
+<div class="card-body">
+
+<h4 class="card-title">📁 Project Reports</h4>
+<p>
+View all project details, deadlines and status.
+</p>
+
+<a href="{% url 'project_report' %}" class="btn btn-light">
+View Report
+</a>
+
 </div>
 </div>
 </div>
 
+<!-- Task Reports -->
 <div class="col-md-4">
-<div class="card shadow">
-<div class="card-body text-center">
-<h4>Task Reports</h4>
-<p>View task progress and status</p>
-<a href="{% url 'task_report' %}" class="btn btn-success">View Report</a>
+<div class="card shadow border-0 text-center bg-success text-white h-100">
+<div class="card-body">
+
+<h4 class="card-title">📝 Task Reports</h4>
+<p>
+Track task progress, priorities and deadlines.
+</p>
+
+<a href="{% url 'task_report' %}" class="btn btn-light">
+View Report
+</a>
+
 </div>
 </div>
 </div>
 
+<!-- Team Reports -->
 <div class="col-md-4">
-<div class="card shadow">
-<div class="card-body text-center">
-<h4>Team Reports</h4>
-<p>View team members and assignments</p>
-<a href="{% url 'team_report' %}" class="btn btn-warning">View Report</a>
+<div class="card shadow border-0 text-center bg-warning text-dark h-100">
+<div class="card-body">
+
+<h4 class="card-title">👥 Team Reports</h4>
+<p>
+View team members, roles and assigned projects.
+</p>
+
+<a href="{% url 'team_report' %}" class="btn btn-dark">
+View Report
+</a>
+
 </div>
 </div>
 </div>
@@ -49,5 +66,4 @@
 
 </div>
 
-</body>
-</html>
+{% endblock %}

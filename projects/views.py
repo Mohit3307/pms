@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Project
+from .models import Project, ProjectComment
 from .forms import ProjectForm
 from team.models import Team
 from tasks.models import Task
+from django.contrib.auth.decorators import login_required
 
 def project_list(request):
     status = request.GET.get('status')
@@ -16,19 +17,41 @@ def project_list(request):
         'projects': projects
     })
 
+@login_required
 def project_detail(request, pk):
+
     project = get_object_or_404(Project, pk=pk)
 
     team_members = Team.objects.filter(project=project)
     tasks = Task.objects.filter(project=project)
 
-    print("TEAM:", team_members)
-    print("TASKS:", tasks)
+    comments = ProjectComment.objects.filter(project=project).order_by("-created_at")
 
-    return render(request, 'projects/project_detail.html', {
-        'project': project,
-        'team_members': team_members,
-        'tasks': tasks,
+    team_member = Team.objects.filter(
+        project=project,
+        user=request.user
+    ).first()
+
+    if request.method == "POST":
+
+        comment_text = request.POST.get("comment")
+
+        if comment_text and team_member and team_member.role != "GUEST":
+
+            ProjectComment.objects.create(
+                project=project,
+                user=request.user,
+                content=comment_text
+            )
+
+            return redirect("project_detail", pk=pk)
+
+    return render(request, "projects/project_detail.html", {
+        "project": project,
+        "team_members": team_members,
+        "tasks": tasks,
+        "comments": comments,
+        "team_member": team_member
     })
 
 def create_project(request):

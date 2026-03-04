@@ -1,7 +1,17 @@
-<h2>Team Members Report</h2>
+{% extends "base.html" %}
 
-<table class="table table-bordered">
+{% block content %}
 
+<div class="container mt-4">
+
+<h2 class="mb-4">👥 Team Members Report</h2>
+
+<div class="card shadow">
+<div class="card-body">
+
+<table class="table table-bordered table-hover">
+
+<thead class="table-dark">
 <tr>
 <th>ID</th>
 <th>User</th>
@@ -9,17 +19,48 @@
 <th>Role</th>
 <th>Project</th>
 </tr>
+</thead>
+
+<tbody>
 
 {% for member in teams %}
 
 <tr>
+
 <td>{{ member.id }}</td>
 <td>{{ member.user.username }}</td>
 <td>{{ member.user.email }}</td>
-<td>{{ member.role }}</td>
+
+<td>
+
+{% if member.role == "ADMIN" %}
+<span class="badge bg-danger">Admin</span>
+
+{% elif member.role == "MEMBER" %}
+<span class="badge bg-primary">Member</span>
+
+{% else %}
+<span class="badge bg-secondary">Guest</span>
+
+{% endif %}
+
+</td>
+
 <td>{{ member.project.title }}</td>
+
 </tr>
 
 {% endfor %}
 
+</tbody>
+
 </table>
+
+</div>
+</div>
+
+<a href="/reports/" class="btn btn-outline-secondary mt-3">← Back</a>
+
+</div>
+
+{% endblock %}
