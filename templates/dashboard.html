@@ -1,0 +1,130 @@
+{% extends "base_app.html" %}
+{% block title %}Dashboard — PMS{% endblock %}
+{% block nav_dashboard %}on{% endblock %}
+
+{% block page_content %}
+
+<div class="page-hd">
+  <div class="page-hd-left">
+    <h1>Good morning, {{ request.user.username }} 👋</h1>
+    <p class="sub">Here's what's happening across your projects today.</p>
+  </div>
+
+  <a href="/tasks/create/" class="btn btn-ghost">+ New Task</a>
+</div>
+
+
+<div class="stat-strip mb20">
+
+  <div class="stat-box cy">
+    <div class="stat-label">Active Projects</div>
+    <div class="stat-num">{{ total_projects }}</div>
+    <div class="stat-note good">{{ in_progress_projects }} in progress</div>
+  </div>
+
+  <div class="stat-box am">
+    <div class="stat-label">Open Tasks</div>
+    <div class="stat-num">{{ open_tasks }}</div>
+    <div class="stat-note warn">{{ due_this_week }} due this week</div>
+  </div>
+
+  <div class="stat-box gr">
+    <div class="stat-label">Completed</div>
+    <div class="stat-num">{{ completed_tasks }}</div>
+    <div class="stat-note good">{{ completion_rate }}% completion rate</div>
+  </div>
+
+  <div class="stat-box pu">
+    <div class="stat-label">Team Members</div>
+    <div class="stat-num">{{ total_members }}</div>
+    <div class="stat-note">across all projects</div>
+  </div>
+
+</div>
+
+
+<div class="sec-hd mb16">
+  <h2>Projects</h2>
+  <a href="/projects/create/" class="btn btn-ghost btn-sm">+ New project</a>
+</div>
+
+
+<div class="proj-grid mb24">
+
+{% for project in projects %}
+
+<div class="proj-card" onclick="location.href='/projects/{{ project.id }}/'">
+
+<div class="proj-card-bar"></div>
+
+<div class="proj-card-top">
+
+<div>
+<div class="proj-name">{{ project.title }}</div>
+<div class="proj-desc">{{ project.description }}</div>
+</div>
+
+</div>
+
+</div>
+
+{% empty %}
+
+<div>No projects yet.</div>
+
+{% endfor %}
+
+
+<div class="proj-card"
+style="border-style:dashed;cursor:pointer;display:flex;align-items:center;justify-content:center"
+onclick="location.href='/projects/create/'">
+
+<div>+ New Project</div>
+
+</div>
+
+</div>
+
+
+<div class="g2">
+
+<div class="card">
+
+<div class="card-head">
+<h3>My Open Tasks</h3>
+<a href="/tasks/" class="btn btn-ghost btn-sm">View all</a>
+</div>
+
+<div style="padding:20px">
+
+{% for task in my_open_tasks %}
+<div>{{task.title}}</div>
+{% empty %}
+<div>No open tasks.</div>
+{% endfor %}
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="card-head">
+<h3>Quick Actions</h3>
+</div>
+
+<div style="padding:15px" class="stack">
+
+<a href="/projects/create/" class="btn btn-cy">+ Create Project</a>
+<a href="/tasks/create/" class="btn btn-ghost">+ Create Task</a>
+<a href="/board/" class="btn btn-ghost">Open Board</a>
+<a href="/reports/" class="btn btn-ghost">View Reports</a>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}
