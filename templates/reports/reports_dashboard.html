@@ -11,31 +11,62 @@
 </div>
 
 <div class="g3">
+
   <div class="card" style="padding:32px;text-align:center;cursor:pointer;transition:all .16s ease;"
        onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''"
        onclick="location.href='{% url 'project_report' %}'">
+
     <div style="font-size:36px;margin-bottom:14px;">📁</div>
-    <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:6px;">Project Reports</div>
-    <p style="font-size:12px;color:var(--t3);margin-bottom:18px;">View project info, deadlines and status.</p>
+
+    <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:6px;">
+      Project Reports
+    </div>
+
+    <p style="font-size:12px;color:var(--t3);margin-bottom:18px;">
+      View project info, deadlines and status.
+    </p>
+
     <a href="{% url 'project_report' %}" class="btn btn-cy btn-sm">View Report</a>
+
   </div>
+
 
   <div class="card" style="padding:32px;text-align:center;cursor:pointer;transition:all .16s ease;"
        onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''"
        onclick="location.href='{% url 'task_report' %}'">
+
     <div style="font-size:36px;margin-bottom:14px;">📝</div>
-    <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:6px;">Task Reports</div>
-    <p style="font-size:12px;color:var(--t3);margin-bottom:18px;">Track task progress, priorities and deadlines.</p>
+
+    <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:6px;">
+      Task Reports
+    </div>
+
+    <p style="font-size:12px;color:var(--t3);margin-bottom:18px;">
+      Track task progress, priorities and deadlines.
+    </p>
+
     <a href="{% url 'task_report' %}" class="btn btn-cy btn-sm">View Report</a>
+
   </div>
+
 
   <div class="card" style="padding:32px;text-align:center;cursor:pointer;transition:all .16s ease;"
        onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''"
-       onclick="location.href='{% url 'reports:team_report' %}'">
+       onclick="location.href='{% url 'team_report' %}'">
+
     <div style="font-size:36px;margin-bottom:14px;">👥</div>
-    <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:6px;">Team Reports</div>
-    <p style="font-size:12px;color:var(--t3);margin-bottom:18px;">View team members, roles and projects.</p>
+
+    <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:6px;">
+      Team Reports
+    </div>
+
+    <p style="font-size:12px;color:var(--t3);margin-bottom:18px;">
+      View team members, roles and projects.
+    </p>
+
     <a href="{% url 'team_report' %}" class="btn btn-cy btn-sm">View Report</a>
+
   </div>
+
 </div>
 {% endblock %}
