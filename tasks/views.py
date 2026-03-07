@@ -39,21 +39,12 @@ def my_tasks(request):
 
 @login_required
 def task_create(request):
-    from team.models import Team
-    from team.views import get_user_role
-
-    user_project_ids = Team.objects.filter(user=request.user).values_list('project_id', flat=True)
-    projects = Project.objects.filter(id__in=user_project_ids)
+    projects = Project.objects.all()
     users    = User.objects.all()
 
     if request.method == 'POST':
         project_id  = request.POST.get('project')
         project_obj = get_object_or_404(Project, id=project_id)
-        role        = get_user_role(request.user, project_obj)
-
-        if role == 'GUEST' or role is None:
-            messages.error(request, 'You do not have permission to create tasks.')
-            return redirect('task_create')
 
         Task.objects.create(
             title       = request.POST.get('title'),
@@ -102,7 +93,6 @@ def task_detail(request, id):
     })
 
 
-# ── delete task (ADMIN only) ──────────────────────────────────────────────────
 @login_required
 def task_delete(request, id):
     from team.views import get_user_role
@@ -111,6 +101,7 @@ def task_delete(request, id):
     if get_user_role(request.user, task.project) != 'ADMIN':
         messages.error(request, 'Only admins can delete tasks.')
         return redirect('task_detail', id=id)
+
     pk = task.project.id
     task.delete()
     return redirect('project_detail', pk=pk)
