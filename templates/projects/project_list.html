@@ -10,17 +10,21 @@
   </div>
   <a href="{% url 'create_project' %}" class="btn btn-cy">+ New Project</a>
 </div>
+
 <form method="GET" style="margin-bottom:16px;">
   <div style="position:relative;width:100%;">
     <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;color:#94a3b8;">🔍</span>
+
     <input
       type="text"
+      id="projectSearch"
       name="q"
       placeholder="Search projects..."
       value="{{ query|default:'' }}"
       style="width:100%;padding:10px 14px 10px 34px;border-radius:8px;border:1px solid #27324a;background:#0f172a;color:white;font-size:13px;outline:none;">
   </div>
 </form>
+
 <div class="fbar mb20">
   <a href="{% url 'project_list' %}"    class="fchip {% if not request.GET.status %}on{% endif %}">All</a>
   <a href="?status=pending"             class="fchip {% if request.GET.status == 'pending' %}on{% endif %}">Pending</a>
@@ -33,24 +37,29 @@
   {% for project in projects %}
   <div class="proj-card" onclick="location.href='{% url 'project_detail' project.id %}'">
     <div class="proj-card-bar" style="background:{% cycle '#00d4ff' '#ffb347' '#7c83fc' '#4ade80' '#fb7185' %}"></div>
+
     <div class="proj-card-top">
       <div>
         <div class="proj-name">{{ project.title }}</div>
         <div class="proj-desc">{{ project.description|truncatechars:80 }}</div>
       </div>
     </div>
+
     <div class="proj-card-foot">
       <div class="proj-meta">
         <span class="pm-item">Due: <strong>{{ project.deadline }}</strong></span>
         <span class="pm-item">By: <strong>{{ project.created_by.username }}</strong></span>
       </div>
+
       <span class="s-chip {% if project.status == 'completed' %}done{% elif project.status == 'in_progress' %}wip{% else %}open{% endif %}">
         {{ project.get_status_display }}
       </span>
     </div>
+
   </div>
   {% endfor %}
 </div>
+
 {% else %}
 <div class="card" style="padding:48px;text-align:center;color:var(--t3);">
   <div style="font-size:36px;margin-bottom:12px;">📁</div>
@@ -59,4 +68,37 @@
   <a href="{% url 'create_project' %}" class="btn btn-cy">+ New Project</a>
 </div>
 {% endif %}
+
+
+<script>
+
+document.getElementById("projectSearch").addEventListener("keyup", function(){
+
+let filter = this.value.toLowerCase()
+
+let container = document.querySelector(".proj-grid")
+
+let projects = Array.from(container.querySelectorAll(".proj-card"))
+
+projects.sort(function(a,b){
+
+let textA = a.innerText.toLowerCase()
+let textB = b.innerText.toLowerCase()
+
+let matchA = textA.includes(filter)
+let matchB = textB.includes(filter)
+
+if(matchA && !matchB) return -1
+if(!matchA && matchB) return 1
+
+return 0
+
+})
+
+projects.forEach(p => container.appendChild(p))
+
+})
+
+</script>
+
 {% endblock %}
