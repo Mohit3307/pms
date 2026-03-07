@@ -15,7 +15,28 @@
   <a href="{% url 'my_tasks' %}" class="btn btn-ghost btn-sm">◈ My Tasks only</a>
 </div>
 
+<div style="margin-bottom:16px;">
+  <div style="position:relative;width:100%;">
+    <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;color:#94a3b8;">🔍</span>
+
+    <input
+      type="text"
+      id="taskSearch"
+      placeholder="Search tasks..."
+      style="width:100%;padding:10px 14px 10px 34px;border-radius:8px;border:1px solid #27324a;background:#0f172a;color:white;font-size:13px;outline:none;"
+    >
+  </div>
+</div>
+
+<div style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap;">
+  <button onclick="filterTasks('')" class="btn btn-ghost btn-sm">All</button>
+  <button onclick="filterTasks('High')" class="btn btn-ghost btn-sm">High</button>
+  <button onclick="filterTasks('Medium')" class="btn btn-ghost btn-sm">Medium</button>
+  <button onclick="filterTasks('Low')" class="btn btn-ghost btn-sm">Low</button>
+</div>
+
 <div class="card">
+
   {% if in_progress_tasks %}
   <div class="tl-group-hd" style="padding:12px 18px 4px;">
     <span class="s-chip wip">In Progress</span><span class="tl-count">{{ in_progress_tasks|length }}</span>
@@ -86,4 +107,49 @@
 
   <div class="add-tl" style="margin-left:0;padding:8px 18px;" onclick="location.href='{% url 'task_create' %}'">＋ Add task</div>
 </div>
+
+<script>
+
+document.getElementById("taskSearch").addEventListener("keyup", function() {
+
+  let filter = this.value.toLowerCase()
+
+  let tasks = document.querySelectorAll(".tl-item")
+
+  tasks.forEach(function(task){
+
+      let text = task.innerText.toLowerCase()
+
+      if(text.includes(filter)){
+          task.style.display = ""
+      }else{
+          task.style.display = "none"
+      }
+
+  })
+
+})
+
+function filterTasks(priority){
+
+  let tasks = document.querySelectorAll(".tl-item")
+
+  tasks.forEach(function(task){
+
+      if(priority === ""){
+          task.style.display = ""
+      }
+      else if(task.innerText.includes(priority)){
+          task.style.display = ""
+      }
+      else{
+          task.style.display = "none"
+      }
+
+  })
+
+}
+
+</script>
+
 {% endblock %}

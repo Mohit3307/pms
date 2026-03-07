@@ -15,20 +15,48 @@
   <a href="{% url 'tasks' %}" class="btn btn-ghost btn-sm">☰ View all team tasks</a>
 </div>
 
+<div style="margin-bottom:16px;">
+  <div style="position:relative;width:100%;">
+    <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;color:#94a3b8;">🔍</span>
+
+    <input
+      type="text"
+      id="taskSearch"
+      placeholder="Search tasks..."
+      style="width:100%;padding:10px 14px 10px 34px;border-radius:8px;border:1px solid #27324a;background:#0f172a;color:white;font-size:13px;outline:none;"
+    >
+  </div>
+</div>
+
+<div style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap;">
+  <button onclick="filterPriority('')" class="btn btn-ghost btn-sm">All</button>
+  <button onclick="filterPriority('High')" class="btn btn-ghost btn-sm">High</button>
+  <button onclick="filterPriority('Medium')" class="btn btn-ghost btn-sm">Medium</button>
+  <button onclick="filterPriority('Low')" class="btn btn-ghost btn-sm">Low</button>
+</div>
+
 <div class="card">
+
   {% if in_progress_tasks %}
   <div class="tl-group-hd" style="padding:12px 18px 4px;">
     <span class="s-chip wip">In Progress</span><span class="tl-count">{{ in_progress_tasks|length }}</span>
   </div>
+
   <div style="padding:4px 18px 8px;">
     <div class="tl-list">
       {% for task in in_progress_tasks %}
       <div class="tl-item t-wip" onclick="location.href='{% url 'task_detail' task.id %}'">
         <div class="tl-dot"></div>
+
         <span class="tl-name">{{ task.title }}</span>
+
         <div class="tl-right">
           <span class="tl-proj">{{ task.project.title }}</span>
-          <span class="s-chip {% if task.priority == 'High' %}hi{% elif task.priority == 'Medium' %}md{% else %}lo{% endif %}">{{ task.priority }}</span>
+
+          <span class="s-chip {% if task.priority == 'High' %}hi{% elif task.priority == 'Medium' %}md{% else %}lo{% endif %}">
+            {{ task.priority }}
+          </span>
+
           <span class="tl-due">{{ task.deadline }}</span>
         </div>
       </div>
@@ -41,15 +69,22 @@
   <div class="tl-group-hd" style="padding:8px 18px 4px;">
     <span class="s-chip open">To Do</span><span class="tl-count">{{ pending_tasks|length }}</span>
   </div>
+
   <div style="padding:4px 18px 8px;">
     <div class="tl-list">
       {% for task in pending_tasks %}
       <div class="tl-item t-open" onclick="location.href='{% url 'task_detail' task.id %}'">
         <div class="tl-dot"></div>
+
         <span class="tl-name">{{ task.title }}</span>
+
         <div class="tl-right">
           <span class="tl-proj">{{ task.project.title }}</span>
-          <span class="s-chip {% if task.priority == 'High' %}hi{% elif task.priority == 'Medium' %}md{% else %}lo{% endif %}">{{ task.priority }}</span>
+
+          <span class="s-chip {% if task.priority == 'High' %}hi{% elif task.priority == 'Medium' %}md{% else %}lo{% endif %}">
+            {{ task.priority }}
+          </span>
+
           <span class="tl-due">{{ task.deadline }}</span>
         </div>
       </div>
@@ -62,13 +97,18 @@
   <div class="tl-group-hd" style="padding:8px 18px 4px;opacity:.6;">
     <span class="s-chip done">Done</span><span class="tl-count">{{ completed_tasks|length }}</span>
   </div>
+
   <div style="padding:4px 18px 8px;opacity:.45;">
     <div class="tl-list">
       {% for task in completed_tasks %}
       <div class="tl-item t-done" onclick="location.href='{% url 'task_detail' task.id %}'">
         <div class="tl-dot"></div>
+
         <span class="tl-name crossed">{{ task.title }}</span>
-        <div class="tl-right"><span class="tl-due">{{ task.deadline }}</span></div>
+
+        <div class="tl-right">
+          <span class="tl-due">{{ task.deadline }}</span>
+        </div>
       </div>
       {% endfor %}
     </div>
@@ -76,9 +116,59 @@
   {% endif %}
 
   {% if not pending_tasks and not in_progress_tasks and not completed_tasks %}
-  <div style="padding:32px 18px;text-align:center;color:var(--t3);font-size:13px;">No tasks assigned to you yet.</div>
+  <div style="padding:32px 18px;text-align:center;color:var(--t3);font-size:13px;">
+    No tasks assigned to you yet.
+  </div>
   {% endif %}
 
-  <div class="add-tl" style="margin-left:0;padding:8px 18px;" onclick="location.href='{% url 'task_create' %}'">＋ Add a task</div>
+  <div class="add-tl" style="margin-left:0;padding:8px 18px;" onclick="location.href='{% url 'task_create' %}'">
+    ＋ Add a task
+  </div>
+
 </div>
+
+<script>
+
+document.getElementById("taskSearch").addEventListener("keyup", function() {
+
+  let filter = this.value.toLowerCase()
+
+  let tasks = document.querySelectorAll(".tl-item")
+
+  tasks.forEach(function(task){
+
+      let text = task.innerText.toLowerCase()
+
+      if(text.includes(filter)){
+          task.style.display = ""
+      }else{
+          task.style.display = "none"
+      }
+
+  })
+
+})
+
+function filterPriority(priority){
+
+  let tasks = document.querySelectorAll(".tl-item")
+
+  tasks.forEach(function(task){
+
+      if(priority === ""){
+          task.style.display = ""
+      }
+      else if(task.innerText.includes(priority)){
+          task.style.display = ""
+      }
+      else{
+          task.style.display = "none"
+      }
+
+  })
+
+}
+
+</script>
+
 {% endblock %}
