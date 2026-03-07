@@ -133,21 +133,31 @@ document.getElementById("taskSearch").addEventListener("keyup", function() {
 
   let filter = this.value.toLowerCase()
 
-  let tasks = document.querySelectorAll(".tl-item")
+  let container = document.querySelector(".tl-list")
 
-  tasks.forEach(function(task){
+  let tasks = Array.from(document.querySelectorAll(".tl-item"))
 
-      let text = task.innerText.toLowerCase()
+  tasks.sort(function(a,b){
 
-      if(text.includes(filter)){
-          task.style.display = ""
-      }else{
-          task.style.display = "none"
-      }
+      let textA = a.innerText.toLowerCase()
+      let textB = b.innerText.toLowerCase()
+
+      let matchA = textA.includes(filter)
+      let matchB = textB.includes(filter)
+
+      if(matchA && !matchB) return -1
+      if(!matchA && matchB) return 1
+
+      return 0
 
   })
 
+  tasks.forEach(function(task){
+      container.appendChild(task)
+  })
+
 })
+
 
 function filterPriority(priority){
 
