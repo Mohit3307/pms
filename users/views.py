@@ -45,7 +45,7 @@ def login_view(request):
 
             if user is not None:
                 auth_login(request, user)
-                return redirect("project_list") 
+                return redirect("/dashboard/")
             else:
                 error = "Invalid email or password"
 
