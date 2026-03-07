@@ -8,9 +8,9 @@ def dashboard(request):
 
     active_projects = Project.objects.count()
 
-    open_tasks = Task.objects.filter(status="Pending").count()
+    open_tasks = Task.objects.filter(status="pending").count()
 
-    completed_tasks = Task.objects.filter(status="Completed").count()
+    completed_tasks = Task.objects.filter(status="completed").count()
 
     team_members = Team.objects.count()
 
@@ -18,7 +18,7 @@ def dashboard(request):
         "active_projects": active_projects,
         "open_tasks": open_tasks,
         "completed_tasks": completed_tasks,
-        "team_members": team_members
+        "team_members": team_members,
     }
 
     return render(request, "dashboard.html", context)
