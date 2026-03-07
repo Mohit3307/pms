@@ -10,7 +10,17 @@
   </div>
   <a href="{% url 'create_project' %}" class="btn btn-cy">+ New Project</a>
 </div>
-
+<form method="GET" style="margin-bottom:16px;">
+  <div style="position:relative;width:100%;">
+    <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;color:#94a3b8;">🔍</span>
+    <input
+      type="text"
+      name="q"
+      placeholder="Search projects..."
+      value="{{ query|default:'' }}"
+      style="width:100%;padding:10px 14px 10px 34px;border-radius:8px;border:1px solid #27324a;background:#0f172a;color:white;font-size:13px;outline:none;">
+  </div>
+</form>
 <div class="fbar mb20">
   <a href="{% url 'project_list' %}"    class="fchip {% if not request.GET.status %}on{% endif %}">All</a>
   <a href="?status=pending"             class="fchip {% if request.GET.status == 'pending' %}on{% endif %}">Pending</a>

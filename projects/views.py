@@ -6,17 +6,25 @@ from tasks.models import Task
 from django.contrib.auth.decorators import login_required
 
 def project_list(request):
+
     status = request.GET.get('status')
+    query = request.GET.get('q')
+
+    projects = Project.objects.all()
 
     if status:
-        projects = Project.objects.filter(status=status)
-    else:
-        projects = Project.objects.all()
+        projects = projects.filter(status=status)
+
+    if query:
+        projects = projects.filter(title__icontains=query)
 
     return render(request, 'projects/project_list.html', {
-    'projects': projects,
-    'sidebar_projects': Project.objects.filter(id__in=Team.objects.filter(user=request.user).values_list('project_id', flat=True)) if request.user.is_authenticated else []
-})
+        'projects': projects,
+        'query': query,
+        'sidebar_projects': Project.objects.filter(
+            id__in=Team.objects.filter(user=request.user).values_list('project_id', flat=True)
+        ) if request.user.is_authenticated else []
+    })
 
 @login_required
 def project_detail(request, pk):
