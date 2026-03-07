@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from users.forms import RegisterForm
 from .forms import LoginForm
 
@@ -52,4 +54,33 @@ def login_view(request):
     return render(request, "login.html", {
         "form": form,
         "error": error
+    })
+
+
+@login_required
+def profile_view(request):
+
+    user = request.user
+
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+
+        user.username = username
+        user.email = email
+        user.save()
+
+        messages.success(request, "Profile updated successfully.")
+
+        return redirect("profile")
+
+    from tasks.models import Task
+
+    open_tasks = Task.objects.filter(assignee=user).exclude(status="Completed").count()
+    completed_tasks = Task.objects.filter(assignee=user, status="Completed").count()
+
+    return render(request, "profile.html", {
+        "user": user,
+        "open_tasks": open_tasks,
+        "completed_tasks": completed_tasks
     })

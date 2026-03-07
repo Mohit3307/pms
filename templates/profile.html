@@ -1,0 +1,79 @@
+{% extends "base_app.html" %}
+{% block title %}Account Settings — PMS{% endblock %}
+{% block nav_settings %}on{% endblock %}
+
+{% block page_content %}
+<div class="page-hd">
+  <div class="page-hd-left"><h1>Account Settings</h1></div>
+  <a href="{% url 'dashboard' %}" class="btn btn-ghost">← Back</a>
+</div>
+
+{% if messages %}
+{% for message in messages %}
+<div style="background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:var(--s-done);padding:9px 13px;border-radius:6px;font-size:12.5px;margin-bottom:14px;">
+  {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+
+<div class="det-grid">
+  <div>
+    <div class="card mb16">
+      <div style="padding:20px;">
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--b1);">
+          <div class="user-hex" style="width:52px;height:52px;font-size:20px;">{{ request.user.username|first|upper }}</div>
+          <div>
+            <div style="font-size:16px;font-weight:800;color:var(--t1);">{{ request.user.username }}</div>
+            <div style="font-size:12px;color:var(--t3);margin-top:2px;">{{ request.user.email }}</div>
+            <div style="margin-top:6px;"><span class="s-chip {% if request.user.is_superuser %}admin{% else %}member{% endif %}">{% if request.user.is_superuser %}Admin{% else %}Member{% endif %}</span></div>
+          </div>
+        </div>
+
+        <form method="POST">
+          {% csrf_token %}
+
+          <div class="field">
+            <label>Username</label>
+            <input type="text" name="username" value="{{ request.user.username }}"/>
+          </div>
+
+          <div class="field">
+            <label>Email</label>
+            <input type="email" name="email" value="{{ request.user.email }}"/>
+          </div>
+
+          <div style="display:flex;gap:9px;margin-top:16px;">
+            <button type="submit" class="btn btn-cy" style="flex:1;justify-content:center;">Save Changes</button>
+            <a href="{% url 'dashboard' %}" class="btn btn-ghost" style="padding:7px 18px;">Cancel</a>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="det-side">
+    <div class="card">
+      <div class="card-head"><h3>My Stats</h3></div>
+      <div style="padding:4px 18px 12px;">
+        <div class="prop-row">
+          <span class="prop-lbl">Open tasks</span>
+          <span class="prop-val" style="font-family:var(--mono);">{{ open_tasks }}</span>
+        </div>
+
+        <div class="prop-row">
+          <span class="prop-lbl">Completed</span>
+          <span class="prop-val" style="font-family:var(--mono);color:var(--s-done);">{{ completed_tasks }}</span>
+        </div>
+
+        <div class="prop-row">
+          <span class="prop-lbl">Joined</span>
+          <span class="prop-val" style="font-family:var(--mono);font-size:11.5px;">{{ request.user.date_joined|date:"M d, Y" }}</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
