@@ -7,82 +7,129 @@
   <title>{% block title %}PMS{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
 </head>
+
 <body>
 <div class="app">
 
 <!-- ── SIDEBAR ────────────────────────────────── -->
 <aside class="sidebar">
+
   <div class="sb-brand">
     <div class="nav-mark">P</div>
     <span class="nav-title">PM<span>S</span></span>
   </div>
 
+
+  <!-- MAIN NAV -->
   <div class="sb-section">
     <nav>
+
+      <!-- DASHBOARD -->
+      <a href="{% url 'dashboard' %}" class="nl {% block nav_dashboard %}{% endblock %}">
+        <span class="nl-icon">▣</span>Dashboard
+      </a>
+
       <a href="{% url 'project_list' %}" class="nl {% block nav_projects %}{% endblock %}">
         <span class="nl-icon">⊞</span>Projects
       </a>
+
       <a href="{% url 'my_tasks' %}" class="nl {% block nav_mytasks %}{% endblock %}">
         <span class="nl-icon">◈</span>My Tasks
       </a>
+
       <a href="{% url 'tasks' %}" class="nl {% block nav_tasks %}{% endblock %}">
         <span class="nl-icon">☰</span>All Tasks
       </a>
+
     </nav>
   </div>
 
+
+  <!-- MY PROJECTS -->
   <div class="sb-section">
+
     <div class="sb-sec-label">My Projects</div>
+
     {% for proj in sidebar_projects %}
       <a href="{% url 'project_detail' proj.id %}" class="proj-item">
         <span class="p-dot" style="background:{% cycle '#00d4ff' '#ffb347' '#7c83fc' '#4ade80' '#fb7185' %}"></span>
         {{ proj.title }}
       </a>
     {% empty %}
-      <span style="font-size:11.5px;color:var(--t3);padding:4px 9px;display:block;">No projects yet</span>
+      <span style="font-size:11.5px;color:var(--t3);padding:4px 9px;display:block;">
+        No projects yet
+      </span>
     {% endfor %}
+
     <a href="{% url 'create_project' %}" class="nl" style="margin-top:4px;">
       <span class="nl-icon">+</span>New project
     </a>
+
   </div>
 
+
+  <!-- REPORTS -->
   <div class="sb-section">
+
     <div class="sb-sec-label">Reports</div>
+
     <nav>
       <a href="{% url 'reports_dashboard' %}" class="nl {% block nav_reports %}{% endblock %}">
         <span class="nl-icon">◉</span>Reports
       </a>
     </nav>
+
   </div>
 
+
+  <!-- TEAM -->
   <div class="sb-section">
+
     <div class="sb-sec-label">Team</div>
+
     <nav>
       <a href="{% url 'team' %}" class="nl {% block nav_team %}{% endblock %}">
         <span class="nl-icon">◎</span>Members
       </a>
     </nav>
+
   </div>
 
+
+  <!-- USER -->
   <div class="sb-footer">
+
     <div class="sb-user">
-      <div class="user-hex">{{ request.user.username|first|upper }}</div>
+      <div class="user-hex">
+        {{ request.user.username|first|upper }}
+      </div>
+
       <div>
         <div class="sb-user-name">{{ request.user.username }}</div>
         <div class="sb-user-role">{{ request.user.email }}</div>
       </div>
     </div>
-    <a href="{% url 'logout' %}" class="sb-signout"><span class="nl-icon">↩</span>Sign out</a>
+
+    <a href="{% url 'logout' %}" class="sb-signout">
+      <span class="nl-icon">↩</span>Sign out
+    </a>
+
   </div>
+
 </aside>
+
 
 <!-- ── MAIN ───────────────────────────────────── -->
 <div class="main">
   <div class="page">
-    {% block page_content %}{% endblock %}
+
+    {% block page_content %}
+    {% endblock %}
+
   </div>
 </div>
 
-</div><!-- .app -->
+</div>
+
 </body>
 </html>
