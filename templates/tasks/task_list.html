@@ -114,18 +114,27 @@ document.getElementById("taskSearch").addEventListener("keyup", function() {
 
   let filter = this.value.toLowerCase()
 
-  let tasks = document.querySelectorAll(".tl-item")
+  let container = document.querySelector(".tl-list")
+
+  let tasks = Array.from(container.querySelectorAll(".tl-item"))
+
+  tasks.sort(function(a,b){
+
+      let textA = a.innerText.toLowerCase()
+      let textB = b.innerText.toLowerCase()
+
+      let matchA = textA.includes(filter)
+      let matchB = textB.includes(filter)
+
+      if(matchA && !matchB) return -1
+      if(!matchA && matchB) return 1
+
+      return 0
+
+  })
 
   tasks.forEach(function(task){
-
-      let text = task.innerText.toLowerCase()
-
-      if(text.includes(filter)){
-          task.style.display = ""
-      }else{
-          task.style.display = "none"
-      }
-
+      container.appendChild(task)
   })
 
 })
