@@ -3,6 +3,7 @@ from .models import Project, ProjectComment
 from .forms import ProjectForm
 from team.models import Team
 from tasks.models import Task
+from projects.models import Project
 from django.contrib.auth.decorators import login_required
 
 def project_list(request):
@@ -60,7 +61,10 @@ def project_detail(request, pk):
         "team_members": team_members,
         "tasks": tasks,
         "comments": comments,
-        "team_member": team_member
+        "team_member": team_member,
+        "sidebar_projects": Project.objects.filter(
+            id__in=Team.objects.filter(user=request.user).values_list("project_id", flat=True)
+        ) if request.user.is_authenticated else []
     })
 
 def create_project(request):
