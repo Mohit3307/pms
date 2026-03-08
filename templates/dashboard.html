@@ -18,25 +18,25 @@
 
   <div class="stat-box cy">
     <div class="stat-label">Active Projects</div>
-    <div class="stat-num">{{ total_projects }}</div>
-    <div class="stat-note good">{{ in_progress_projects }} in progress</div>
+    <div class="stat-num">{{ active_projects }}</div>
+    <div class="stat-note good">in progress</div>
   </div>
 
   <div class="stat-box am">
     <div class="stat-label">Open Tasks</div>
     <div class="stat-num">{{ open_tasks }}</div>
-    <div class="stat-note warn">{{ due_this_week }} due this week</div>
+    <div class="stat-note warn">due this week</div>
   </div>
 
   <div class="stat-box gr">
     <div class="stat-label">Completed</div>
     <div class="stat-num">{{ completed_tasks }}</div>
-    <div class="stat-note good">{{ completion_rate }}% completion rate</div>
+    <div class="stat-note good">tasks completed</div>
   </div>
 
   <div class="stat-box pu">
     <div class="stat-label">Team Members</div>
-    <div class="stat-num">{{ total_members }}</div>
+    <div class="stat-num">{{ team_members }}</div>
     <div class="stat-note">across all projects</div>
   </div>
 
@@ -97,7 +97,7 @@ onclick="location.href='/projects/create/'">
 
 <div style="padding:20px">
 
-{% for task in my_open_tasks %}
+{% for task in my_tasks %}
 <div>{{task.title}}</div>
 {% empty %}
 <div>No open tasks.</div>
