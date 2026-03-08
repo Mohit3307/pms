@@ -2,28 +2,59 @@ from django.shortcuts import render
 from projects.models import Project
 from tasks.models import Task
 from team.models import Team
+from math import pi
 
 
 def dashboard(request):
 
-    project_ids = Team.objects.filter(user=request.user)\
+    project_ids = Team.objects.filter(user=request.user) \
                               .values_list("project_id", flat=True)
 
     projects = Project.objects.filter(id__in=project_ids)
 
-    my_tasks = Task.objects.filter(assignee=request.user, status="Pending")
+    sidebar_projects = projects
 
-    active_projects = Project.objects.count()
+    # circle math
+    CIRCUMFERENCE = 2 * pi * 28
 
-    open_tasks = Task.objects.filter(status="pending").count()
+    for project in projects:
 
-    completed_tasks = Task.objects.filter(id__in=project_ids,status="completed").count()
+        tasks = Task.objects.filter(project=project)
 
-    team_members = Team.objects.filter(project_id__in=project_ids).count()
+        total = tasks.count()
+        done = tasks.filter(status="completed").count()
 
-    sidebar_projects = Project.objects.filter(id__in=project_ids)
+        if total > 0:
+            pct = int((done / total) * 100)
+        else:
+            pct = 0
 
-    projects = sidebar_projects
+        offset = CIRCUMFERENCE - (pct / 100) * CIRCUMFERENCE
+
+        project.task_count = total
+        project.done_count = done
+        project.progress = pct
+        project.arc_offset = offset
+
+    # dashboard stats
+    my_tasks = Task.objects.filter(assignee=request.user, status="pending")
+
+    active_projects = projects.count()
+
+    open_tasks = Task.objects.filter(
+        project_id__in=project_ids,
+        status="pending"
+    ).count()
+
+    completed_tasks = Task.objects.filter(
+        project_id__in=project_ids,
+        status="completed"
+    ).count()
+
+    team_members = Team.objects.filter(
+        project_id__in=project_ids
+    ).count()
+
     context = {
         "active_projects": active_projects,
         "open_tasks": open_tasks,
