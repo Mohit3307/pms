@@ -5,7 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from users.forms import RegisterForm
 from .forms import LoginForm
-
+from projects.models import Project
+from team.models import Team
 
 # Create your views here.
 
@@ -82,5 +83,8 @@ def profile_view(request):
     return render(request, "profile.html", {
         "user": user,
         "open_tasks": open_tasks,
-        "completed_tasks": completed_tasks
+        "completed_tasks": completed_tasks,
+        "sidebar_projects": Project.objects.filter(
+            id__in=Team.objects.filter(user=request.user).values_list("project_id", flat=True)
+        ) if request.user.is_authenticated else []
     })

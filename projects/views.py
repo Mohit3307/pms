@@ -85,7 +85,10 @@ def create_project(request):
             return redirect('project_list')
     else:
         form = ProjectForm()
-    return render(request, 'projects/project_form.html', {'form': form})
+    return render(request, 'projects/project_form.html', {'form': form,
+    'sidebar_projects': Project.objects.filter(
+        id__in=Team.objects.filter(user=request.user).values_list('project_id', flat=True)
+    ) if request.user.is_authenticated else []})
 
 
 def update_project(request, pk):
@@ -97,7 +100,11 @@ def update_project(request, pk):
             return redirect('project_list')
     else:
         form = ProjectForm(instance=project)
-    return render(request, 'projects/project_form.html', {'form': form})
+    return render(request, 'projects/project_form.html', {'form': form, 
+    'sidebar_projects': Project.objects.filter(
+        id__in=Team.objects.filter(user=request.user).values_list('project_id', flat=True)
+    ) if request.user.is_authenticated else []
+    })
 
 
 def delete_project(request, pk):
