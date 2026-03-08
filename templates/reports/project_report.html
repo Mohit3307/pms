@@ -11,7 +11,7 @@
 <div class="page-hd">
   <div class="page-hd-left">
     <h1>Project Report</h1>
-    <p class="sub">{{ projects|length }} project{{ projects|length|pluralize }} total.</p>
+    <p class="sub">{{ project_data|length }} project{{ project_data|length|pluralize }} total.</p>
   </div>
   <a href="{% url 'reports_dashboard' %}" class="btn btn-ghost">← Back</a>
 </div>
@@ -19,24 +19,30 @@
 <div class="card">
   <table class="xtable">
     <thead>
-      <tr><th>#</th><th>Project</th><th>Description</th><th>Deadline</th><th>Status</th><th>Created By</th></tr>
+      <tr><th>#</th><th>Project</th><th>Description</th><th>Deadline</th><th>Status</th><th>Progress</th><th>Created By</th></tr>
     </thead>
     <tbody>
-      {% for project in projects %}
-      <tr onclick="location.href='{% url 'project_detail' project.id %}'" style="cursor:pointer;">
-        <td style="color:var(--t4);font-family:var(--mono);">{{ project.id }}</td>
-        <td><strong>{{ project.title }}</strong></td>
-        <td style="color:var(--t3);">{{ project.description|truncatechars:50 }}</td>
-        <td style="font-family:var(--mono);font-size:12px;">{{ project.deadline }}</td>
+      {% for item in project_data %}
+      <tr onclick="location.href='{% url 'project_detail' item.project.id %}'" style="cursor:pointer;">
+        <td style="color:var(--t4);font-family:var(--mono);">{{ item.project.id }}</td>
+        <td><strong>{{ item.project.title }}</strong></td>
+        <td style="color:var(--t3);">{{ item.project.description|truncatechars:50 }}</td>
+        <td style="font-family:var(--mono);font-size:12px;">{{ item.project.deadline }}</td>
         <td>
-          <span class="s-chip {% if project.status == 'completed' %}done{% elif project.status == 'in_progress' %}wip{% else %}open{% endif %}">
-            {{ project.get_status_display }}
+          <span class="s-chip {% if item.project.status == 'completed' %}done{% elif item.project.status == 'in_progress' %}wip{% else %}open{% endif %}">
+            {{ item.project.get_status_display }}
           </span>
         </td>
-        <td>{{ project.created_by.username }}</td>
+        <td>
+          <div style="background:#1f2338;height:6px;border-radius:5px;width:100px;">
+            <div style="background:#22c55e;height:6px;border-radius:5px;width:{{ item.progress }}%;"></div>
+          </div>
+          <small>{{ item.progress }}%</small>
+        </td>
+        <td>{{ item.project.created_by.username }}</td>
       </tr>
       {% empty %}
-      <tr><td colspan="6" style="color:var(--t3);padding:20px;">No projects found.</td></tr>
+      <tr><td colspan="7" style="color:var(--t3);padding:20px;">No projects found.</td></tr>
       {% endfor %}
     </tbody>
   </table>
