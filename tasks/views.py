@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 
-from .models import Task
+from .models import Task, TaskComment
 from projects.models import Project
 
 
@@ -71,6 +71,8 @@ def task_detail(request, id):
     task    = get_object_or_404(Task, id=id)
     my_role = get_user_role(request.user, task.project)
 
+    comments = TaskComment.objects.filter(task=task).order_by("-created_at")
+
     if request.method == 'POST':
         action = request.POST.get('action')
 
@@ -84,11 +86,22 @@ def task_detail(request, id):
             else:
                 messages.error(request, 'Guests cannot update task status.')
 
+        elif action == "add_comment":
+            comment_text = request.POST.get("comment")
+
+            if comment_text:
+                TaskComment.objects.create(
+                    task=task,
+                    user=request.user,
+                    content=comment_text
+                )
+
         return redirect('task_detail', id=id)
 
     return render(request, 'tasks/task_detail.html', {
         'task':             task,
         'my_role':          my_role,
+        'comments': comments,
         'sidebar_projects': get_sidebar_projects(request.user),
     })
 

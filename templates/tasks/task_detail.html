@@ -16,7 +16,6 @@
 
 <div class="det-grid">
 
-  <!-- Left: task info -->
   <div>
     <div class="card">
       <div style="padding:20px 20px 16px;">
@@ -34,9 +33,63 @@
         </p>
       </div>
     </div>
+    <div class="card">
+  <div class="card-head"><h3>Activity &amp; Comments</h3></div>
+
+  {% for comment in comments %}
+  <div class="comment">
+    <div class="c-hex" style="background:#00d4ff;">
+      {{ comment.user.username|first|upper }}
+    </div>
+
+    <div style="flex:1;">
+      <div>
+        <span class="c-name">{{ comment.user.username }}</span>
+        <span class="c-time">
+          {{ comment.created_at|date:"M d · g:i A" }}
+        </span>
+      </div>
+
+      <div class="c-text">
+        {{ comment.content }}
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div style="padding:14px 18px;color:var(--t3);font-size:12.5px;">
+    No comments yet.
+  </div>
+  {% endfor %}
+
+  <div style="padding:12px 18px;border-top:1px solid var(--b1);display:flex;gap:10px;align-items:flex-start;">
+    <div class="c-hex" style="background:#00d4ff;margin-top:2px;">
+      {{ request.user.username|first|upper }}
+    </div>
+
+    <div style="flex:1;">
+      <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="add_comment">
+
+        <textarea
+          name="comment"
+          class="comment-textarea"
+          placeholder="Add a comment…"
+          rows="3"
+          required>
+        </textarea>
+
+        <div style="margin-top:6px;">
+          <button type="submit" class="btn btn-cy btn-sm">
+            Post
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
   </div>
 
-  <!-- Right: properties panel -->
   <div class="det-side">
     <div class="card">
       <div class="card-head"><h3>Properties</h3></div>
@@ -86,7 +139,7 @@
       </form>
 
       {% else %}
-      <!-- Read-only for guests -->
+    
       <div style="padding:12px 18px 14px;">
         <div class="prop-row">
           <span class="prop-lbl">Status</span>
