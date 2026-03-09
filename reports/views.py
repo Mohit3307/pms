@@ -23,9 +23,13 @@ def project_report(request):
             progress = round((completed_tasks / total_tasks) * 100)
         else:
             progress = 0
-        if total_tasks > 0 and completed_tasks == total_tasks:
+        if progress == 0:
+            project.status = "pending"
+        elif progress == 100:
             project.status = "completed"
-            project.save()
+        else:
+            project.status = "in_progress"
+        project.save()
         project_data.append({
             "project": project,
             "progress": progress

@@ -30,7 +30,7 @@
         <td style="font-family:var(--mono);font-size:12px;">{{ item.project.deadline }}</td>
         <td>
           <span class="s-chip {% if item.project.status == 'completed' %}done{% elif item.project.status == 'in_progress' %}wip{% else %}open{% endif %}">
-            {{ item.project.get_status_display }}
+          {{ item.project.get_status_display }}
           </span>
         </td>
         <td>
