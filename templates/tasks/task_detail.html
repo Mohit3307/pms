@@ -44,6 +44,67 @@
       </div>
     </div>
 
+    <div class="card" style="margin-top:16px;">
+    <div class="card-head">
+    <h3>Activity & Comments</h3>
+    </div>
+
+    <div style="padding:16px 20px;">
+
+    {% for comment in comments %}
+    <div style="display:flex;gap:10px;margin-bottom:14px;">
+
+    <div class="av-sm" style="background:#00d4ff;width:26px;height:26px;">
+    {{ comment.user.username|first|upper }}
+    </div>
+
+    <div>
+
+    <div style="font-size:12px;color:var(--t2);font-weight:600;">
+    {{ comment.user.username }}
+
+    <span style="color:var(--t4);font-weight:400;font-size:11px;">
+    {{ comment.created_at|date:"M d, H:i" }}
+    </span>
+
+    </div>
+
+    <div style="font-size:13px;color:var(--t1);margin-top:3px;">
+    {{ comment.content }}
+    </div>
+
+    </div>
+    </div>
+    {% empty %}
+    <div style="font-size:12px;color:var(--t4);">
+    No comments yet.
+    </div>
+    {% endfor %}
+
+
+    {% if my_role == "ADMIN" or my_role == "MEMBER" %}
+    <form method="POST" style="margin-top:12px;">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="add_comment"/>
+
+    <textarea
+    name="comment"
+    placeholder="Add a comment..."
+    rows="2"
+    style="width:100%;background:var(--input);border:1px solid var(--b2);border-radius:6px;padding:8px;color:var(--t1);font-size:13px;"></textarea>
+
+    <button type="submit"
+    class="btn btn-cy btn-sm"
+    style="margin-top:6px;">
+    Post
+    </button>
+
+    </form>
+    {% endif %}
+
+    </div>
+    </div>
+
     <!-- EDIT MODE (hidden by default) -->
     {% if my_role == "ADMIN" or my_role == "MEMBER" %}
     <div class="card" id="edit-card" style="display:none;">
