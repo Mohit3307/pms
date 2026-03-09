@@ -33,25 +33,29 @@
       </div>
       <div class="field">
         <label>Project <span style="color:var(--p-hi);">*</span></label>
-        <select name="project" required>
+        <select name="project" id="project-select" required onchange="loadMembers(this.value)">
           <option value="">— Select project —</option>
           {% for project in projects %}
-          <option value="{{ project.id }}">{{ project.title }}</option>
+          <option value="{{ project.id }}"
+            {% if selected_project == project.id|stringformat:"s" %}selected{% endif %}>
+            {{ project.title }}
+          </option>
           {% endfor %}
         </select>
       </div>
     </div>
   </div>
+
   <div class="fblock">
     <div class="fblock-head">Assignment</div>
     <div class="fblock-body">
       <div class="field-row">
         <div class="field">
           <label>Assign to</label>
-          <select name="assignee">
-            <option value="">Unassigned (defaults to me)</option>
-            {% for user in users %}
-            <option value="{{ user.id }}">{{ user.username }}</option>
+          <select name="assignee" id="assignee-select">
+            <option value="">— Select project first —</option>
+            {% for member in project_members %}
+            <option value="{{ member.id }}">{{ member.username }}</option>
             {% endfor %}
           </select>
         </div>
@@ -64,9 +68,9 @@
         <div class="field">
           <label>Status</label>
           <select name="status">
-            <option value="Pending">To Do</option>
+            <option value="Pending">Pending</option>
             <option value="In Progress">In Progress</option>
-            <option value="Completed">Done</option>
+            <option value="Completed">Completed</option>
           </select>
         </div>
         <div class="field">
@@ -80,9 +84,39 @@
       </div>
     </div>
   </div>
+
   <div style="display:flex;gap:9px;">
     <button type="submit" class="btn btn-cy" style="flex:1;justify-content:center;padding:9px;">Create Task</button>
     <a href="{% url 'tasks' %}" class="btn btn-ghost" style="padding:9px 18px;">Cancel</a>
   </div>
 </form>
+
+<script>
+function loadMembers(projectId) {
+  const sel = document.getElementById('assignee-select');
+  if (!projectId) {
+    sel.innerHTML = '<option value="">— Select project first —</option>';
+    return;
+  }
+  sel.innerHTML = '<option value="">Loading...</option>';
+  fetch(`/tasks/members/?project_id=${projectId}`)
+    .then(r => r.json())
+    .then(data => {
+      sel.innerHTML = '<option value="">Unassigned (defaults to me)</option>';
+      data.members.forEach(m => {
+        sel.innerHTML += `<option value="${m.id}">${m.username}</option>`;
+      });
+    })
+    .catch(() => {
+      sel.innerHTML = '<option value="">— Could not load members —</option>';
+    });
+}
+
+// Auto-trigger if project was pre-selected via ?project=ID
+document.addEventListener('DOMContentLoaded', function () {
+  const sel = document.getElementById('project-select');
+  if (sel && sel.value) loadMembers(sel.value);
+});
+</script>
+
 {% endblock %}
